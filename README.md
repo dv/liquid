@@ -1,5 +1,6 @@
-[![Build Status](https://api.travis-ci.org/Shopify/liquid.svg?branch=master)](http://travis-ci.org/Shopify/liquid)
-[![Inline docs](http://inch-ci.org/github/Shopify/liquid.svg?branch=master)](http://inch-ci.org/github/Shopify/liquid)
+![build tests](https://github.com/dv/liquid/workflows/build%20tests/badge.svg)
+
+# Customisations in this fork
 
 # Liquid template engine
 
