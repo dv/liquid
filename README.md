@@ -2,6 +2,10 @@
 
 # Customisations in this fork
 
+The changes in this fork are mainly to make it a bit more compatible with Jinja templates.
+
+- Added support for `elif` as a synonym for `elsif`
+
 # Liquid template engine
 
 * [Contributing guidelines](CONTRIBUTING.md)

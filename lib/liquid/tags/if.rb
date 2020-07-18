@@ -34,7 +34,7 @@ module Liquid
     end
 
     def unknown_tag(tag, markup, tokens)
-      if ['elsif', 'else'].include?(tag)
+      if ['elsif', 'elif', 'else'].include?(tag)
         push_block(tag, markup)
       else
         super
