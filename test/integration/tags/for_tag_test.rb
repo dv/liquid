@@ -33,6 +33,10 @@ HERE
     assert_template_result(expected, template, 'array' => [1, 2, 3])
   end
 
+  def test_for_destructuring
+    assert_template_result(' 1+2  2+3  3+4 ', '{%for item_head, item_tail in array%} {{ item_head }}+{{ item_tail }} {%endfor%}', 'array' => [[1, 2], [2, 3], [3, 4]])
+  end
+
   def test_for_reversed
     assigns = { 'array' => [1, 2, 3] }
     assert_template_result('321', '{%for item in array reversed %}{{item}}{%endfor%}', assigns)

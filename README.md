@@ -5,6 +5,7 @@
 The changes in this fork are mainly to make it a bit more compatible with Jinja templates.
 
 - Added support for `elif` as a synonym for `elsif`
+- Added destructuring support in `for` loops: `for a, b in items`
 
 # Liquid template engine
 

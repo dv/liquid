@@ -8,7 +8,7 @@
       case_invalid_when: "Syntax Error in tag 'case' - Valid when condition: {% when [condition] [or condition2...] %}"
       case_invalid_else: "Syntax Error in tag 'case' - Valid else condition: {% else %} (no parameters) "
       cycle: "Syntax Error in 'cycle' - Valid syntax: cycle [name :] var [, var2, var3 ...]"
-      for: "Syntax Error in 'for loop' - Valid syntax: for [item] in [collection]"
+      for: "Syntax Error in 'for loop' - Valid syntax: for [item[, item_2, ...]] in [collection]"
       for_invalid_in: "For loops require an 'in' clause"
       for_invalid_attribute: "Invalid attribute in for loop. Valid attributes are limit and offset"
       if: "Syntax Error in tag 'if' - Valid syntax: if [expression]"

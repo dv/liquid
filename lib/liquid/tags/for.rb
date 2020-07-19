@@ -18,6 +18,11 @@ module Liquid
   #      There is nothing in the collection.
   #    {% endfor %}
   #
+  # == Destructuring:
+  #    {% for key, value in hash %}
+  #      {{ key }}: {{ value }}
+  #    {% endfor %}
+  #
   # You can also define a limit and offset much like SQL.  Remember
   # that offset starts at 0 for the first item.
   #
@@ -46,7 +51,8 @@ module Liquid
   # forloop.parentloop:: Provides access to the parent loop, if present.
   #
   class For < Block
-    Syntax = /\A(#{VariableSegment}+)\s+in\s+(#{QuotedFragment}+)\s*(reversed)?/o
+    # Syntax = /\A(#{VariableSegment}+)\s+in\s+(#{QuotedFragment}+)\s*(reversed)?/o
+    Syntax = /\A(?<variables> [\w\-,\s]+)\s+in\s+(?<collection> #{QuotedFragment}+)\s*(?<reversed> reversed)?/xo
 
     attr_reader :collection_name, :variable_name, :limit, :from
 
@@ -88,10 +94,10 @@ module Liquid
 
     def lax_parse(markup)
       if markup =~ Syntax
-        @variable_name   = Regexp.last_match(1)
-        collection_name  = Regexp.last_match(2)
-        @reversed        = !!Regexp.last_match(3)
-        @name            = "#{@variable_name}-#{collection_name}"
+        @variable_names  = Regexp.last_match[:variables].split(",").map(&:strip)
+        collection_name  = Regexp.last_match[:collection]
+        @reversed        = !!Regexp.last_match[:reversed]
+        @name            = "#{@variable_names.join('_')}-#{collection_name}"
         @collection_name = Expression.parse(collection_name)
         markup.scan(TagAttributes) do |key, value|
           set_attribute(key, value)
@@ -103,13 +109,18 @@ module Liquid
 
     def strict_parse(markup)
       p = Parser.new(markup)
-      @variable_name = p.consume(:id)
+
+      # first variable name
+      @variable_names = [p.consume(:id)]
+      # followed by comma separated others
+      @variable_names << p.consume(:id) while p.consume?(:comma)
+
       raise SyntaxError, options[:locale].t("errors.syntax.for_invalid_in") unless p.id?('in')
 
       collection_name  = p.expression
       @collection_name = Expression.parse(collection_name)
 
-      @name     = "#{@variable_name}-#{collection_name}"
+      @name     = "#{@variable_names.join('_')}-#{collection_name}"
       @reversed = p.id?('reversed')
 
       while p.look(:id) && p.look(:colon, 1)
@@ -169,7 +180,14 @@ module Liquid
           context['forloop'] = loop_vars
 
           segment.each do |item|
-            context[@variable_name] = item
+            if @variable_names.length == 1
+              context[@variable_names.first] = item
+            else
+              @variable_names.each_with_index do |variable_name, index|
+                context[variable_name] = item[index]
+              end
+            end
+
             @for_block.render_to_output_buffer(context, output)
             loop_vars.send(:increment!)
 
